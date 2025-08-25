@@ -1,0 +1,29 @@
+<launch>
+  <env name="TURTLEBOT3_MODEL" value="waffle"/>
+  
+  <!-- Launch Gazebo with TurtleBot3 world -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+
+  <!-- Launch navigation with the sample map -->
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+    <arg name="map_file" value="$(find turtlebot3_navigation)/maps/map.yaml"/>
+  </include>
+
+  <!-- Publish initial pose (equivalent to 2D Pose Estimate) -->
+  <node pkg="rostopic" type="rostopic" name="set_initial_pose"
+        args="pub -1 /initialpose geometry_msgs/PoseWithCovarianceStamped 
+        '{ header: { frame_id: map }, 
+           pose: { pose: { position: {x: -2.0, y: -0.5, z: 0.0}, 
+                           orientation: {z: 0.0, w: 1.05} }, 
+                   covariance: [0.25, 0, 0, 0, 0, 0,
+                                0, 0.25, 0, 0, 0, 0,
+                                0, 0, 0.25, 0, 0, 0,
+                                0, 0, 0, 0.0685, 0, 0,
+                                0, 0, 0, 0, 0.0685, 0,
+                                0, 0, 0, 0, 0, 0.0685] } }'"/>
+  
+  <!-- Publish navigation path -->
+  <node pkg="turtlebot3_autonav" type="multi_point_nav.py" name="multi_goal_nav" output="screen" args="$(find turtlebot3_autonav)/scripts/paths/$(arg path_file)" />
+
+</launch>
+
