@@ -1,0 +1,38 @@
+<launch>
+  <env name="TURTLEBOT3_MODEL" value="waffle"/>
+
+  <!-- Arguments for goal coordinates -->
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="2.0"/>
+  <arg name="yaw" default="0.0"/>
+  
+  <!-- Launch Gazebo with TurtleBot3 world -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+
+  <!-- Launch navigation with the sample map -->
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+    <arg name="map_file" value="$(find turtlebot3_navigation)/maps/map.yaml"/>
+  </include>
+
+  <!-- Publish initial pose (equivalent to 2D Pose Estimate) -->
+  <node pkg="rostopic" type="rostopic" name="set_initial_pose"
+        args="pub -1 /initialpose geometry_msgs/PoseWithCovarianceStamped 
+        '{ header: { frame_id: map }, 
+           pose: { pose: { position: {x: -2.0, y: -0.5, z: 0.0}, 
+                           orientation: {z: 0.0, w: 1.05} }, 
+                   covariance: [0.25, 0, 0, 0, 0, 0,
+                                0, 0.25, 0, 0, 0, 0,
+                                0, 0, 0.25, 0, 0, 0,
+                                0, 0, 0, 0.0685, 0, 0,
+                                0, 0, 0, 0, 0.0685, 0,
+                                0, 0, 0, 0, 0, 0.0685] } }'"/>
+  
+  <!-- Publish navigation goal -->
+  <node pkg="turtlebot3_autonav" type="send_goal.py" name="send_goal" output="screen">
+    <param name="goal_x" value="$(arg x)" />
+    <param name="goal_y" value="$(arg y)" />
+    <param name="goal_yaw" value="$(arg yaw)" />
+  </node>
+
+</launch>
+

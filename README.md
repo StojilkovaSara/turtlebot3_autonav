@@ -68,6 +68,22 @@ source ~/.bashrc
 
 # Usage
 
+## Navigation to One Point Simulation
+
+This simulation sends the robot to a certain point on the map. Follow the next instructions to send the robot to a point.
+
+- Make sure the python script is executable
+```bash
+chmod +x scripts/send_goal.py
+```
+- Launch **send_goal** with the wanted coordinates. You can also leave out the arguments, and in that case the robot will be sent to a default point 0.0, 2.0, 0.0.
+```bash
+roslaunch turtlebot3_autonav send_goal.launch x:=0.0 y:=2.0 yaw:=1.57
+```
+- Once the robot reaches the goal, you can send it another goal by just running the send_goal python script again
+```bash
+rosrun turtlebot3_autonav send_goal.py 2.0 1.5
+```
 ## Multi Point Navigation Simulation
 
 This simulation can be run with any path defined in **scripts/paths/**. The following instructions will send the robot on a path going around all nine obsticles, but feel free to change the argument of the launch command with any other path.yaml files in the directory.
@@ -79,6 +95,10 @@ chmod +x scripts/multi_point_nav.py
 - Launch **tb3_autonav**
 ```bash
 roslaunch turtlebot3_autonav tb3_autonav.launch path_file:=all_around.yaml
+```
+- Once the robot has reached the final destination, you can send it on another path by just running the multi_point_nav python script again
+```bash
+rosrun turtlebot3_autonav multi_point_nav.py (path to path_file)
 ```
 
 ## Exploring Simulation
