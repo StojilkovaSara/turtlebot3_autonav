@@ -3,6 +3,7 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import tf
+import sys
 
 def send_goal(x, y, yaw):
     client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
@@ -30,9 +31,18 @@ def send_goal(x, y, yaw):
 if __name__ == "__main__":
     rospy.init_node("send_goal")
 
-    x = rospy.get_param("~goal_x", 0.0)
-    y = rospy.get_param("~goal_y", 2.0)
-    yaw = rospy.get_param("~goal_yaw", 0.0)
+    if len(sys.argv) == 4:
+      try:
+        x = float(sys.argv[1])
+        y = float(sys.argv[2])
+        yaw = float(sys.argv[3])
+      except ValueError:
+        rospy.logger("Arguments must be numbers: x y yaw")
+        exit(1)
+    else:
+      x = rospy.get_param("~goal_x", 0.0)
+      y = rospy.get_param("~goal_y", 2.0)
+      yaw = rospy.get_param("~goal_yaw", 0.0)
 
     try:
         send_goal(x, y, yaw)
